@@ -269,7 +269,7 @@ async function dOpen(id){const L=await dList(),m=L.find(x=>x.id==id);if(!m)retur
  if(m.mode=="base"){if(SEL!="base")await pick("base");F=Object.assign(def(),data.F||{});ED=data.ED||{};saveED();try{localStorage.setItem(NS("sr2"),JSON.stringify(F))}catch(e){}draw()}
  else{if(SEL!=m.mode)await pick(m.mode);const Lm=KIND=="hwpx"?HR:R;if(!Lm)return dMsg(TN(m.mode)+"에 양식이 없어 열 수 없습니다. 먼저 샘플을 불러오세요.");
   V=Object.assign({},V,data.V||{});GN=data.GN||{};PE=data.pe||{};PX=data.px||{};enter();persist();if(data.sample&&Lm.names[0]!==data.sample)window.toast("이 작성본은 다른 샘플로 만든 양식에서 저장한 것이라 일부 값이 맞지 않을 수 있습니다.",8000)}
- $("ddlg").style.display="none";window.toast("‘"+m.name+"’을(를) 열었습니다",3000)}
+ try{if(window.qGet){const q=qGet();if(!q.active){q.active=true;qSet(q)}}}catch(e){}$("ddlg").style.display="none";window.toast("‘"+m.name+"’을(를) 열었습니다",3000)}
 async function dDel(id){const L=await dList(),m=L.find(x=>x.id==id);if(!m)return;window.ask("‘"+m.name+"’ 작성본을 삭제할까요?",async()=>{await idbPut("drafts",L.filter(x=>x.id!=id));await idbPut("draft:"+id,null);await dRender();dMsg("삭제했습니다.")})}
 $("dsave").onclick=dSave;$("dclose").onclick=()=>$("ddlg").style.display="none";
 $("dlist").onclick=e=>{const o=e.target.dataset.o,x=e.target.dataset.x;if(o)dOpen(o);if(x)dDel(x)};
@@ -325,6 +325,15 @@ async function buildEditableDocx(){
  await window.saveFile((R.names[0]||"보고서").slice(0,30)+"_편집용.docx",u8);return{pages:pages.length,boxes:pages.reduce((a,p)=>a+p.boxes.length,0),bytes:u8.length}}
 async function exportDocx(k){try{window.toast("편집 가능한 문서를 만드는 중입니다… (쪽이 많으면 1분 이상 걸립니다)",90000);const r=await buildEditableDocx();window.toast((k=="hwpx"?"한글(.hwpx) 형식은 지원하지 않아, 한글에서 열 수 있는 워드(.docx) 편집용 파일로 저장했습니다. 한글에서 이 파일을 열어 편집하세요. ":"편집용 워드 파일을 저장했습니다. ")+"("+r.pages+"쪽)",12000)}catch(e){console.error(e);window.toast("저장 오류: "+e.message,9000)}}
 window.__exportDocx=buildEditableDocx;
+
+
+// ---- 새 보고서 시작(계정당 보고서 3개까지, 다 쓰면 계정 잠금)
+function resetWork(){
+ if(!SEL||SEL=="base"){try{F=def();ED={};saveED();try{localStorage.setItem(NS("sr2"),JSON.stringify(F))}catch(e){}draw()}catch(e){console.warn(e)}return}
+ const L=KIND=="hwpx"?HR:R;if(!L)return;V={};L.fields.forEach(f=>V[f.id]=f.vals[0]);GN={};IMG={};PE={};PX={};enter();persist()}
+window.quotaNew=function(){if(!window.qGet)return;const q=qGet(),MX=window.QMAX||3;
+ if(q.n>=MX){window.ask("보고서 "+MX+"개를 모두 시작했습니다. 새 보고서를 시작하면 이 계정이 잠기고 더 이상 사용할 수 없습니다. 계속할까요?",()=>{q.locked=true;qSet(q);qLockScreen()});return}
+ window.ask("지금 작성 중인 내용을 지우고 새 보고서를 시작합니다. (남은 횟수 "+(MX-q.n)+"회) 계속할까요?",()=>{resetWork();const q2=qGet();q2.active=false;qSet(q2);qRender();window.toast("새 보고서를 시작했습니다. 내용을 입력하면 횟수가 1 늘어납니다.",5000)})};
 
 window.__lrn={get R(){return R},get V(){return V},get PE(){return PE},get PX(){return PX},get newNum(){return newNum},get L(){return CURL}};
 })();
