@@ -5,7 +5,7 @@
 <meta name="description" content="건설공사 정기안전점검 보고서를 양식 그대로 자동 작성하고 한글(hwpx)·워드(docx)로 내려받는 도구">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%93%84%3C/text%3E%3C/svg%3E">
 <style>
-:root{--bg:#e9ecf0;--pn:#fff;--tx:#1d2733;--ac:#1f4e8c;--bd:#cfd6df;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--bg:#f2f7ff;--pn:#fff;--tx:#12284a;--ac:#1565e0;--bd:#d0e0f7;--or:#ff7a1a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181d;--pn:#1e252d;--tx:#e6ebf0;--bd:#38424d}}
 :root[data-theme="dark"]{--bg:#14181d;--pn:#1e252d;--tx:#e6ebf0;--bd:#38424d}
 *{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -15,8 +15,8 @@ header h1{font-size:16px;margin:0 auto 0 0}
 button{border:1px solid var(--bd);background:var(--pn);color:var(--tx);border-radius:6px;padding:5px 10px;cursor:pointer;font:inherit}
 header button{background:#fff;color:var(--ac);border:0}
 .tabs{display:flex;gap:4px;flex-wrap:wrap;padding:6px 12px;background:var(--pn);border-bottom:1px solid var(--bd)}
-.tabs button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
-.pg.em [contenteditable=true]:hover{outline:1px dashed #7a9cc6}.pg.em [contenteditable=true]:focus{outline:2px solid #1f4e8c66}.edbadge{position:absolute;left:4px;top:2px;z-index:3;font:11px sans-serif;background:#fff3cd;border:1px solid #d9a400;padding:1px 6px;border-radius:4px;color:#7a5b00;line-height:16px}.edbadge button{font-size:11px;padding:0 4px;margin-left:4px}
+.tabs button.on{background:var(--or);color:#fff;border-color:var(--or)}[style*="background:var(--ac)"]{background:var(--or)!important}
+.pg.em [contenteditable=true]:hover{outline:1px dashed #7a9cc6}.pg.em [contenteditable=true]:focus{outline:2px solid #1565e066}.edbadge{position:absolute;left:4px;top:2px;z-index:3;font:11px sans-serif;background:#fff3cd;border:1px solid #d9a400;padding:1px 6px;border-radius:4px;color:#7a5b00;line-height:16px}.edbadge button{font-size:11px;padding:0 4px;margin-left:4px}
 #dlg{position:fixed;inset:0;background:#0006;z-index:99;display:none;align-items:center;justify-content:center}#dlg .bx{background:var(--pn);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:16px 18px;max-width:340px;box-shadow:0 6px 24px #0005}#dlg .bx p{margin:0 0 12px;white-space:pre-line}#dlg .bx div{display:flex;gap:8px;justify-content:flex-end}#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#1d2733;color:#fff;padding:10px 16px;border-radius:8px;z-index:100;display:none;max-width:90vw;white-space:pre-line;font-size:13px;box-shadow:0 3px 14px #0006}
 main{display:flex;height:calc(100vh - 92px)}
 #panel{width:360px;min-width:270px;overflow:auto;padding:10px;background:var(--pn);border-right:1px solid var(--bd)}
@@ -75,7 +75,7 @@ addEventListener("load",function(){setTimeout(function(){if(!document.querySelec
  W.qGet=function(uid){uid=uid||W.UID;try{return Object.assign({n:0,active:false,locked:false},JSON.parse(LS.getItem("quota::"+uid)||"{}"))}catch(e){return{n:0,active:false,locked:false}}};
  W.qSet=function(q,uid){try{LS.setItem("quota::"+(uid||W.UID),JSON.stringify(q))}catch(e){}};
  W.qRender=function(){var q=W.qGet(),b=document.getElementById("qbadge");if(b){b.textContent="보고서 "+q.n+"/"+QMAX;b.style.color=q.n>=QMAX?"#ffb3b3":"#fff";b.style.fontWeight=700}};
- W.qLockScreen=function(msg){if(document.getElementById("qlock"))return;var d=document.createElement("div");d.id="qlock";d.style.cssText="position:fixed;inset:0;z-index:10001;background:#e9ecf0;display:flex;align-items:center;justify-content:center;padding:14px;font:14px/1.6 'Malgun Gothic',sans-serif;color:#1d2733";d.innerHTML='<div style="background:#fff;border:1px solid #cfd6df;border-radius:12px;padding:26px 28px;width:min(400px,100%);text-align:center;box-shadow:0 8px 30px #0003"><div style="font-size:34px">🔒</div><h2 style="margin:6px 0 8px;font-size:19px">계정이 잠겼습니다</h2><p style="margin:0 0 16px">'+(msg||("이 계정은 보고서 "+QMAX+"개 작성을 모두 마쳐 더 이상 사용할 수 없습니다."))+'</p><button onclick="authLogout()" style="padding:9px 22px;font-weight:700;background:#1f4e8c;color:#fff;border:0;border-radius:6px">로그아웃</button></div>';document.body.appendChild(d)};
+ W.qLockScreen=function(msg){if(document.getElementById("qlock"))return;var d=document.createElement("div");d.id="qlock";d.style.cssText="position:fixed;inset:0;z-index:10001;background:#e9ecf0;display:flex;align-items:center;justify-content:center;padding:14px;font:14px/1.6 'Malgun Gothic',sans-serif;color:#1d2733";d.innerHTML='<div style="background:#fff;border:1px solid #cfd6df;border-radius:12px;padding:26px 28px;width:min(400px,100%);text-align:center;box-shadow:0 8px 30px #0003"><div style="font-size:34px">🔒</div><h2 style="margin:6px 0 8px;font-size:19px">계정이 잠겼습니다</h2><p style="margin:0 0 16px">'+(msg||("이 계정은 보고서 "+QMAX+"개 작성을 모두 마쳐 더 이상 사용할 수 없습니다."))+'</p><button onclick="authLogout()" style="padding:9px 22px;font-weight:700;background:#1565e0;color:#fff;border:0;border-radius:6px">로그아웃</button></div>';document.body.appendChild(d)};
  W.qNote=function(){var q=W.qGet();if(q.active||q.locked)return;if(q.n>=QMAX){q.locked=true;W.qSet(q);W.qLockScreen();return}q.n++;q.active=true;W.qSet(q);W.qRender();if(W.toast)W.toast("보고서 "+q.n+"/"+QMAX+"개째 작성을 시작했습니다."+(q.n>=QMAX?" 마지막 보고서입니다. 이 보고서는 끝까지 작성할 수 있고, 로그아웃하거나 브라우저를 닫은 뒤 다시 로그인하면 계정이 잠깁니다.":""),q.n>=QMAX?12000:4000)};
  var can=!!(LS&&W.crypto&&W.crypto.subtle);W.AUTH_OK=can;
  function users(){try{return JSON.parse(LS.getItem("acct_users")||"{}")}catch(e){return{}}}
@@ -89,24 +89,22 @@ addEventListener("load",function(){setTimeout(function(){if(!document.querySelec
  function gate(){var legacy=!LS.getItem("legacy_claimed")&&(LS.getItem("sr2")||LS.getItem("sr2ed")||LS.getItem("lrn_sel"));var d=document.createElement("div");d.id="authgate";
   d.style.cssText="position:fixed;inset:0;z-index:10000;background:#e9ecf0;display:flex;align-items:center;justify-content:center;padding:14px;font:14px/1.5 'Malgun Gothic',sans-serif;color:#1d2733";
   d.innerHTML='<div style="background:#fff;border:1px solid #cfd6df;border-radius:12px;padding:22px 24px;width:min(380px,100%);box-shadow:0 8px 30px #0003"><h2 style="margin:0 0 4px;font-size:18px">정기안전점검 보고서 자동작성</h2><p style="margin:0 0 12px;font-size:12px;color:#667">아이디로 로그인하면 내가 작성한 내용이 내 계정에만 저장됩니다.</p>'
-  +'<div style="display:flex;gap:6px;margin-bottom:10px"><button id="agL" style="flex:1;padding:8px;font-weight:700;background:#1f4e8c;color:#fff;border:0;border-radius:6px">로그인</button><button id="agS" style="flex:1;padding:8px;font-weight:700;background:#fff;border:1px solid #cfd6df;border-radius:6px">새 계정 만들기</button></div>'
+  +'<div style="display:flex;gap:6px;margin-bottom:10px"><button id="agL" style="flex:1;padding:8px;font-weight:700;background:#1565e0;color:#fff;border:0;border-radius:6px">로그인</button><button id="agS" style="flex:1;padding:8px;font-weight:700;background:#fff;border:1px solid #cfd6df;border-radius:6px">새 계정 만들기</button></div>'
   +'<label style="font-size:12px">아이디</label><input id="agI" autocomplete="username" style="width:100%;padding:8px;border:1px solid #cfd6df;border-radius:6px;margin:2px 0 8px" placeholder="영문·숫자·한글 3~20자">'
-  +'<label style="font-size:12px">비밀번호</label><input id="agP" type="password" autocomplete="current-password" style="width:100%;padding:8px;border:1px solid #cfd6df;border-radius:6px;margin:2px 0 8px" placeholder="6자 이상">'
+  +'<label style="font-size:12px">비밀번호</label><input id="agP" type="password" autocomplete="current-password" style="width:100%;padding:8px;border:1px solid #cfd6df;border-radius:6px;margin:2px 0 8px" placeholder="영문·숫자 6자 이상">'
   +'<div id="agR" style="display:none"><label style="font-size:12px">비밀번호 확인</label><input id="agP2" type="password" autocomplete="new-password" style="width:100%;padding:8px;border:1px solid #cfd6df;border-radius:6px;margin:2px 0 8px"></div>'
-  +'<label style="font-size:12px;display:flex;gap:6px;align-items:center"><input id="agK" type="checkbox"> 이 컴퓨터에서 로그인 유지</label>'
-  +(legacy?'<label id="agM" style="font-size:12px;display:none;gap:6px;align-items:center;margin-top:4px"><input id="agMc" type="checkbox" checked> 이 컴퓨터에 있던 기존 작업 내용을 이 계정으로 가져오기</label>':"")
-  +'<p id="agE" style="color:#b00020;font-size:13px;min-height:18px;margin:8px 0 4px"></p><button id="agGo" style="width:100%;padding:10px;font-weight:700;background:#1f4e8c;color:#fff;border:0;border-radius:6px">로그인</button>'
-  +'<p style="font-size:11px;color:#667;margin:10px 0 0">※ 이 계정은 <b>이 컴퓨터의 이 브라우저 안에만</b> 저장됩니다. 다른 컴퓨터·브라우저에서는 쓸 수 없고, 비밀번호를 잊으면 복구할 수 없습니다. 공용 컴퓨터에서는 로그아웃하세요.</p></div>';
+  +'<p id="agE" style="color:#b00020;font-size:13px;min-height:18px;margin:8px 0 4px"></p><button id="agGo" style="width:100%;padding:10px;font-weight:700;background:#ff7a1a;color:#fff;border:0;border-radius:6px">로그인</button>'
+  +'</div>';
   document.body.appendChild(d);var mode="L",$=function(i){return document.getElementById(i)};
-  function sw(m){mode=m;$("agR").style.display=m=="S"?"block":"none";if($("agM"))$("agM").style.display=m=="S"?"flex":"none";$("agGo").textContent=m=="S"?"계정 만들고 시작하기":"로그인";$("agL").style.cssText+=m=="L"?";background:#1f4e8c;color:#fff":";background:#fff;color:#1d2733";$("agS").style.cssText+=m=="S"?";background:#1f4e8c;color:#fff":";background:#fff;color:#1d2733";$("agE").textContent="";$("agP").autocomplete=m=="S"?"new-password":"current-password"}
+  function sw(m){mode=m;$("agR").style.display=m=="S"?"block":"none";if($("agM"))$("agM").style.display=m=="S"?"flex":"none";$("agGo").textContent=m=="S"?"계정 만들고 시작하기":"로그인";$("agL").style.cssText+=m=="L"?";background:#1565e0;color:#fff":";background:#fff;color:#1d2733";$("agS").style.cssText+=m=="S"?";background:#1565e0;color:#fff":";background:#fff;color:#1d2733";$("agE").textContent="";$("agP").autocomplete=m=="S"?"new-password":"current-password"}
   $("agL").onclick=function(){sw("L")};$("agS").onclick=function(){sw("S")};
   async function go(){var id=$("agI").value.trim(),pw=$("agP").value,key=id.toLowerCase(),us=users(),E=function(m){$("agE").textContent=m};
    if(!/^[A-Za-z0-9가-힣_.-]{3,20}$/.test(id))return E("아이디는 영문·숫자·한글·_ . - 로 3~20자여야 합니다.");if(pw.length<6)return E("비밀번호는 6자 이상이어야 합니다.");
    $("agGo").disabled=true;try{
-    if(mode=="S"){if(us[key]){E("이미 있는 아이디입니다.");return}if(pw!==$("agP2").value){E("비밀번호 확인이 다릅니다.");return}
+    if(mode=="S"){if(us[key]){E("이미 있는 아이디입니다.");return}if(!/^[A-Za-z0-9]+$/.test(pw)){E("비밀번호는 영문과 숫자만 사용할 수 있습니다.");return}if(pw!==$("agP2").value){E("비밀번호 확인이 다릅니다.");return}
      var salt=hex(W.crypto.getRandomValues(new Uint8Array(16)));us[key]={disp:id,salt:salt,hash:await H(pw,salt),created:Date.now()};LS.setItem("acct_users",JSON.stringify(us));
-     if($("agMc")&&$("agMc").checked)await migrate(key);await enter(key,$("agK").checked)}
-    else{var u=us[key];if(!u){E("없는 아이디입니다. ‘새 계정 만들기’를 눌러 주세요.");return}if(await H(pw,u.salt)!==u.hash){E("비밀번호가 맞지 않습니다.");return}if(W.qGet(key).n>=QMAX){E("이 계정은 보고서 "+QMAX+"개를 모두 작성하여 잠겼습니다. 더 이상 사용할 수 없습니다.");return}await enter(key,$("agK").checked)}
+     if(legacy)await migrate(key);await enter(key,false)}
+    else{var u=us[key];if(!u){E("없는 아이디입니다. ‘새 계정 만들기’를 눌러 주세요.");return}if(await H(pw,u.salt)!==u.hash){E("비밀번호가 맞지 않습니다.");return}if(W.qGet(key).n>=QMAX){E("이 계정은 보고서 "+QMAX+"개를 모두 작성하여 잠겼습니다. 더 이상 사용할 수 없습니다.");return}await enter(key,false)}
    }catch(e){E("처리 중 오류: "+e.message)}finally{$("agGo").disabled=false}}
   $("agGo").onclick=go;[$("agI"),$("agP"),$("agP2")].forEach(function(i){i&&i.addEventListener("keydown",function(e){if(e.key=="Enter")go()})});
   var lu=null;try{lu=Object.keys(users());if(!lu.length)sw("S")}catch(e){}$("agI").focus()}

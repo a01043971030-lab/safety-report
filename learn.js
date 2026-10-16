@@ -20,14 +20,14 @@ const css=document.createElement("style");css.textContent=`
 #lpanel label{display:block;font-size:12px;margin:8px 0 2px;opacity:.85}#lpanel small{opacity:.6}
 #lpanel input[type=text],#lpanel textarea,#lpanel input[type=number]{width:100%;border:1px solid var(--bd);border-radius:5px;padding:5px;background:var(--bg);color:var(--tx);font:inherit}
 #lpanel h4{margin:14px 0 4px;border-bottom:1px solid var(--bd);padding-bottom:3px}
-.lalt{padding:8px 14px}.le[contenteditable]:hover{outline:1px dashed #7a9cc6}.le[contenteditable]:focus{outline:2px solid #1f4e8c66;background:#fffbe0}.lov[contenteditable]{cursor:text}.cv{content-visibility:auto;contain-intrinsic-size:auto 842pt 595pt}@media print{.cv{content-visibility:visible!important}}.lp{position:relative;background:#fff;color:#000;margin:0 auto 14px;box-shadow:0 1px 6px #0004;overflow:hidden;font-family:${FONT}}
+.lalt{padding:8px 14px}.lov.hit{color:transparent;background:transparent;caret-color:#1565e0;cursor:text}.lov.hit:hover{outline:1px dashed #ff7a1a}.lov.hit:focus,.lov.hit.chg{color:#000;background:#fff}.lov.hit:focus{outline:2px solid #ff7a1a66}.lov.hit::selection{color:#000;background:#ffb98a}.le[contenteditable]:hover{outline:1px dashed #7a9cc6}.le[contenteditable]:focus{outline:2px solid #1f4e8c66;background:#fffbe0}.lov[contenteditable]{cursor:text}.cv{content-visibility:auto;contain-intrinsic-size:auto 842pt 595pt}@media print{.cv{content-visibility:visible!important}}.lp{position:relative;background:#fff;color:#000;margin:0 auto 14px;box-shadow:0 1px 6px #0004;overflow:hidden;font-family:${FONT}}
 .lp>img.ras{position:absolute;inset:0;width:100%;height:100%}.lmask{position:absolute;background:#fff}
 .lov{position:absolute;white-space:pre-wrap;word-break:keep-all;color:#000;font-family:${FONT}}
 .lstrip{position:absolute;left:0;right:0;background-repeat:no-repeat;background-size:100% auto}
 .lgap{position:absolute;left:30pt;right:30pt;display:flex;align-items:center;justify-content:center;text-align:center;border:1px dashed #aaa;color:#999;font:12px sans-serif}
 .lgap img{width:100%;height:100%;object-fit:contain}
 #ldrop:hover{background:var(--bg)}.hxv{margin:0 0 6pt;white-space:pre-wrap;word-break:keep-all}.hxv.v{background:#fff6c8}
-#tybar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:var(--pn);border-bottom:2px solid var(--ac)}#tybar b{font-size:13px;margin-right:4px}#tybar button{font-weight:700;padding:7px 14px}#tybar button.on{background:var(--ac);color:#fff;border-color:var(--ac)}#tybar button.has::after{content:' ●';color:#2e9e5b;font-size:10px}#tybar .gap{flex:1}#tybar button.alt{font-weight:400;opacity:.85}#lmb{display:none!important}@media(min-width:761px){main{height:calc(100vh - 140px)!important}}
+#tybar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:var(--pn);border-bottom:2px solid var(--ac)}#tybar b{font-size:13px;margin-right:4px}#tybar button{font-weight:700;padding:7px 14px}#tybar button.on{background:var(--or);color:#fff;border-color:var(--or)}#tybar button.has::after{content:' ●';color:#2e9e5b;font-size:10px}#tybar .gap{flex:1}#tybar button.alt{font-weight:400;opacity:.85}#lmb{display:none!important}@media(min-width:761px){main{height:calc(100vh - 140px)!important}}
 @media print{#tybar{display:none!important}#lpanel,#ldlg{display:none!important}#lview{padding:0;overflow:visible}.lp{margin:0;box-shadow:none;page-break-after:always}.lgap.empty{display:none}}`;
 document.head.appendChild(css);
 document.body.insertAdjacentHTML("beforeend",`<div id="ldlg"><div class="bx"><h3>샘플 보고서 불러오기</h3><div id="lbody"></div><div id="lprog"></div><div class="row" id="lbtn"></div></div></div>`);
@@ -97,18 +97,18 @@ $("lpanel").addEventListener("change",e=>{if(e.target.id!="lem")return;EDITM=e.t
 {const LV=$("lview");let pt0;
  LV.addEventListener("input",e=>{const t=e.target;if(!t.classList||!t.classList.contains("lov"))return;const txt=t.innerText.replace(/\u00a0/g," ").replace(/\n$/,"");
   if(t.dataset.of){V[t.dataset.of]=txt;document.querySelectorAll('[data-of="'+t.dataset.of+'"]').forEach(x=>{if(x!==t)x.textContent=txt});const inp=document.querySelector('#lpanel [data-f="'+t.dataset.of+'"]');if(inp)inp.value=txt}
-  else if(t.dataset.k)PE[t.dataset.k]=txt;
+  else if(t.dataset.k){PE[t.dataset.k]=txt;if(t.dataset.o!==undefined&&txt===t.dataset.o)delete PE[t.dataset.k]}
   else if(t.dataset.px){const[bi,i]=t.dataset.px.split(":");if(PX[bi]&&PX[bi][i])PX[bi][i].t=txt}
-  clearTimeout(pt0);pt0=setTimeout(persist,500)});
+  if(t.classList.contains("hit"))t.classList.toggle("chg",t.dataset.o!==undefined&&txt!==t.dataset.o);clearTimeout(pt0);pt0=setTimeout(persist,500)});
  LV.addEventListener("focusout",e=>{const t=e.target;if(t.dataset&&t.dataset.px&&!t.innerText.trim()){const[bi,i]=t.dataset.px.split(":");(PX[bi]||[]).splice(+i,1);drawView();persist()}});
- LV.addEventListener("dblclick",e=>{if(!EDITM)return;const pgEl=e.target.closest&&e.target.closest(".lp");if(!pgEl||!pgEl.dataset.bi||e.target.classList.contains("lov"))return;const bi=pgEl.dataset.bi,c=R.cand.find(x=>x.bi==+bi),r=pgEl.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*c.W,y=(e.clientY-r.top)/r.height*c.H;
+ LV.addEventListener("dblclick",e=>{const pgEl=e.target.closest&&e.target.closest(".lp");if(!pgEl||!pgEl.dataset.bi||e.target.classList.contains("lov"))return;const bi=pgEl.dataset.bi,c=R.cand.find(x=>x.bi==+bi),r=pgEl.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*c.W,y=(e.clientY-r.top)/r.height*c.H;
   (PX[bi]=PX[bi]||[]).push({x:+x.toFixed(1),y:+(y-7).toFixed(1),s:11,t:"새 글자"});drawView();persist();const el=document.querySelector('[data-px="'+bi+":"+(PX[bi].length-1)+'"]');if(el){el.focus();document.execCommand&&document.execCommand("selectAll",false,null)}})}
 const isLegacy=()=>!!(R&&R.cand&&R.cand.some(c=>!c.lines));
 function fieldHtml(f){const ph=esc((f.vals.slice(1).find(x=>x)||"").slice(0,60)),v=esc(V[f.id]??"");return `<div class="lfl" data-t="${esc((f.label+" "+f.vals.join(" ")).toLowerCase())}"><label>${esc(f.label)} <small>(${f.uses}곳 반영)</small></label>${f.multi||(V[f.id]||"").length>40?`<textarea data-f="${f.id}" rows="${Math.min(8,Math.max(2,(V[f.id]||"").split("\n").length))}" placeholder="${ph}">${v}</textarea>`:`<input type="text" data-f="${f.id}" value="${v}" placeholder="${ph}">`}</div>`}
 function drawPanel(){if(KIND=="hwpx")return hxPanel();lockL();const used=new Set();R.cand.filter(c=>KEEP.has(c.bi)).forEach(c=>{c.slots.forEach(s=>used.add(s.fid));(c.lines||[]).forEach(l=>{if(l.fid)used.add(l.fid)})});const FL=R.fields.filter(f=>used.has(f.id));
  const nav=R.nav&&R.nav.length>1?R.nav:[{label:"입력칸",bi:0}],secOf=bi=>{let s=0;nav.forEach((n,i)=>{if(n.bi<=bi)s=i});return s},secs=nav.map(n=>({label:n.label,f:[],g:[]}));
  FL.forEach(f=>secs[secOf(f.page)].f.push(f));const L=LRN.layout(R,KEEP,GN);L.out.filter(o=>o.k=="gap"&&(o.avg>0||(IMG[o.gi]||[]).length)).forEach(o=>secs[secOf(o.from+1)].g.push(o));
- let h=`${isLegacy()?`<div style="border:2px solid #b00020;background:#fff0f0;color:#7a0016;padding:8px 10px;border-radius:6px;font-size:13px;margin-bottom:8px"><b>이 양식은 예전 방식으로 분석되어 표지·목차가 빠져 있습니다.</b><br>같은 샘플을 한 번 더 불러오면 표지·목차까지 샘플 틀 그대로 나오고, 바뀌는 부분만 입력칸이 됩니다.</div>`:""}<p style="margin:0 0 8px"><button onclick="lrnOpen()">샘플 다시 불러오기</button></p><label style="display:flex;gap:6px;align-items:flex-start;font-size:13px;margin:0 0 8px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px"><input type="checkbox" id="lem"${EDITM?" checked":""}><span><b>쪽 글자 직접 편집</b><br><small>글자를 눌러 고치고(수정), 지우면 삭제, 빈 곳을 두 번 누르면 글상자가 추가됩니다(삽입).</small></span></label><p style="font-size:13px"><b>학습한 양식</b><br>${esc(R.names[0])} 외 ${R.N-1}개 샘플<br>고정 쪽 ${KEEP.size}쪽 · 입력칸 ${FL.length}개</p><input type="text" id="lq" placeholder="입력칸 검색 (이름·내용)" style="margin-bottom:8px">`;
+ let h=`${isLegacy()?`<div style="border:2px solid #b00020;background:#fff0f0;color:#7a0016;padding:8px 10px;border-radius:6px;font-size:13px;margin-bottom:8px"><b>이 양식은 예전 방식으로 분석되어 표지·목차가 빠져 있습니다.</b><br>같은 샘플을 한 번 더 불러오면 표지·목차까지 샘플 틀 그대로 나오고, 바뀌는 부분만 입력칸이 됩니다.</div>`:""}<p style="margin:0 0 8px"><button onclick="lrnOpen()">샘플 다시 불러오기</button></p><p style="font-size:13px"><b>학습한 양식</b><br>${esc(R.names[0])} 외 ${R.N-1}개 샘플<br>고정 쪽 ${KEEP.size}쪽 · 입력칸 ${FL.length}개</p><input type="text" id="lq" placeholder="입력칸 검색 (이름·내용)" style="margin-bottom:8px">`;
  if(ACT>=secs.length)ACT=0;
  secs.forEach((s,i)=>{const pg=s.g.reduce((a,o)=>a+o.n,0);const frontSec=!!(R.nav&&R.nav.length>1&&i==0),isCore=f=>!f.vs&&(frontSec||f.uses>1),core=s.f.filter(isCore),rest=s.f.filter(f=>!isCore(f)),fl=arr=>{let b="",last=-1;arr.forEach(f=>{if(f.page!=last){b+=`<div style="font-size:11px;opacity:.55;margin-top:8px">── 기준 보고서 p.${f.page+1} ──</div>`;last=f.page}b+=fieldHtml(f)});return b};let body=fl(core);if(rest.length)body+=`<details class="ldet" style="margin-top:10px;border-top:1px dashed var(--bd);padding-top:6px"><summary style="cursor:pointer;font-size:13px;font-weight:700;opacity:.85">상세 입력칸 (${rest.length}개)</summary>${fl(rest)}</details>`;
   if(s.g.length)body+=`<h4>자료 쪽 (사진·도면·계산서 등)</h4>`+s.g.map(o=>`<label>${o.from<0?"맨 앞":"p."+(o.from+1)+" 다음"} 자료 쪽 <small>(샘플 평균 ${o.avg}쪽)</small></label><input type="number" min="0" max="300" data-g="${o.gi}" value="${o.n}"><input type="file" accept="image/*" multiple data-gi="${o.gi}" style="margin-top:4px">`).join("");
@@ -138,14 +138,20 @@ const boxOv=(b,bi,i,edit)=>`<div class="lov le bxn"${edit?' contenteditable="tru
 function outPosL(L,bi){let r=-1,best=0;L.out.forEach((o,k)=>{if(o.k=="tpl"){if(o.c.bi==bi)r=o.at;if(o.c.bi<=bi)best=o.at}else{const nx=L.out.slice(k+1).find(x=>x.k=="tpl"),hi=nx?nx.c.bi:1e9;if(bi>o.from&&bi<hi&&o.n>0)r=o.at+Math.min(bi-o.from-1,o.n-1)}});return r>=0?r:best}
 const newNum=n=>outPosL(CURL,n-1+R.offBase)+1+CURL.off;
 const hfOf=c=>c.lines?(!c.live&&c.lines.some(l=>l.top<70)&&(c.lines.some(l=>l.bot>c.H-70)||c.pn.length>0)):c.hf;
+const hitOf=s=>s.replace('class="lov le"','class="lov le hit"');
+function hitSlot(s,c){let o=ov(s,c,true);o=o.replace(/<div class="lmask"[^>]*><\/div>/,"");return o.replace('class="lov','class="lov hit')}
 function tplHTML(c,num,pg){const edit=EDITM,img=edit?(RASTN[c.bi]||RAST[c.bi]):RAST[c.bi];let h=`<div class="lp cv" id="lp${pg}" data-bi="${c.bi}" style="width:${c.W}pt;height:${c.H}pt">${img?`<img class="ras" decoding="async" src="${img}">`:""}`;
- h+=c.slots.map(s=>ov(s,c,edit)).join("")+c.pn.map(p=>pnov(p,num,edit)).join("");
+ c.slots.forEach(s=>{if(edit)h+=ov(s,c,true);else if(V[s.fid]!==FBv[s.fid])h+=ov(s,c,true).replace('class="lov','class="lov chg').replace(/data-of=/,'data-o="'+esc(FBv[s.fid]??"")+'" data-of=');else h+=hitSlot(s,c).replace(/data-of=/,'data-o="'+esc(FBv[s.fid]??"")+'" data-of=')});
+ h+=c.pn.map(p=>pnov(p,num,edit)).join("");
  (c.lines||[]).forEach((l,li)=>{if(l.sl)return;const k=c.bi+":"+li,pe=PE[k];
   if(l.fid){const val=V[l.fid]??l.t;if(edit)h+=lineOv(l,val,k,true,l.fid);else if(val!==FBv[l.fid])h+=maskOf(l)+lineOv(l,val,k,false,l.fid);return}
   let t=pe!==undefined?pe:l.t,changed=pe!==undefined;
   if(l.num&&R.offBase!=null&&pe===undefined){const nn=newNum(l.num);if(nn!==l.num){t=String(nn);changed=true}}
-  if(edit)h+=lineOv(l,t,k,true);else if(changed)h+=maskOf(l)+lineOv(l,t,k,false)});
- (PX[c.bi]||[]).forEach((b,i)=>{h+=boxOv(b,c.bi,i,edit)});return h+"</div>"}
+  if(edit){h+=lineOv(l,t,k,true);return}
+  if(l.v)return;
+  const o=lineOv(l,t,k,true).replace('data-k=','data-o="'+esc(l.t)+'" data-k=');
+  h+=changed?o.replace('class="lov le"','class="lov le hit chg"'):hitOf(o)});
+ (PX[c.bi]||[]).forEach((b,i)=>{h+=boxOv(b,c.bi,i,true)});return h+"</div>"}
 function drawView(){if(KIND=="hwpx")return hxView();const L=LRN.layout(R,KEEP,GN),v=$("lview"),y=v.scrollTop,tpls=L.out.filter(o=>o.k=="tpl");let h="",pg=0;FBv={};R.fields.forEach(f=>FBv[f.id]=f.vals[0]);CURL=L;
  L.out.forEach(o=>{if(o.k=="tpl"){h+=tplHTML(o.c,o.at+1+L.off,pg);pg++}
   else for(let m=0;m<o.n;m++){const idx=o.at+m;let ref=[...tpls].reverse().find(t=>t.at<idx&&hfOf(t.c)&&(t.at%2)==(idx%2))||[...tpls].reverse().find(t=>t.at<idx&&hfOf(t.c)),c=ref&&ref.c,W=c?c.W:595.2,H=c?c.H:841.92,u=(IMG[o.gi]||[])[m];
